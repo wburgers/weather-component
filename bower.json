@@ -1,0 +1,28 @@
+{
+  "name": "weather-component",
+  "version": "1.0.0",
+  "homepage": "https://github.com/wburgers/weather-component",
+  "description": "A weather widget based on polymer",
+  "keywords": [
+    "web-components"
+  ],
+  "main": "weather-component.html",
+  "authors": [
+    "Willem Burgers"
+  ],
+  "license": "BSD",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.1.0",
+	"iron-ajax": "PolymerElements/iron-ajax#^1.2.0",
+    "weather-icons": "^2.0.10"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "*"
+  }
+}

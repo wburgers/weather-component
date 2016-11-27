@@ -1,0 +1,28 @@
+<!--
+Copyright (c) 2016 Willem Burgers. All rights reserved.
+This code may only be used under the BSD style license found at http://wburgers.github.io/LICENSE.txt
+-->
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+		<title>Weather-component Demo</title>
+		<script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
+		<link rel="import" href="../weather-component.html">
+		<style>
+			html, body {
+				width: 100%;
+				height: 100%;
+			}
+			body {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+		</style>
+	</head>
+	<body>
+		<weather-component app-id="your api key here" lat="your latitude here" lon="your longitude here" show-name></weather-component>
+	</body>
+</html>

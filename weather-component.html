@@ -1,0 +1,170 @@
+<!--
+Copyright (c) 2016 Willem Burgers. All rights reserved.
+This code may only be used under the BSD style license found at http://wburgers.github.io/LICENSE.txt
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+
+<!--
+An element that displays train departure times at a certain station for the Dutch railway
+
+Example:
+
+    <weather-component appId="your appId here" lat="latitude" lon="longitude"></weather-component>
+
+@element weather-component
+@demo demo/index.html
+-->
+<dom-module id="weather-component">
+	<link rel="import" type="css" href="../weather-icons/css/weather-icons.min.css">
+	<link rel="import" type="css" href="../weather-icons/css/weather-icons-wind.min.css">
+	<template>
+		<style>
+			:host {
+				font-size: 4em;
+			}
+			.section {
+				display: inline-block;
+				vertical-align: top;
+				padding-right: 5px;
+				padding-left: 5px;
+			}
+			.centered-text {
+				text-align: center;
+			}
+			.smaller-text {
+				font-size: 0.35em;
+			}
+		</style>
+		<iron-ajax id="ajax"
+			auto
+			url="http://api.openweathermap.org/data/2.5/weather"
+			params="[[_params]]"
+			handle-as="json"
+			last-response="{{_response}}"
+			verbose
+			on-response="_handleResponse">
+		</iron-ajax>
+			<template is="dom-if" if="{{showName}}">
+				<div class="centered-text">
+					{{_response.name}}
+			</div>
+			</template>
+		<div class="centered-text">
+			<div class="section">
+				<div class="centered-texts">
+					<i class$="{{_computeIcon(_response)}}"></i>
+				</div>
+				<div class="centered-text smaller-text">
+					{{_response.weather.0.description}}
+				</div>
+			</div>
+			<div class="section">
+				<span>{{_response.main.temp}}°</span>
+			</div>
+			<div class="section">
+				<div class="centered-text">
+					<i class$="{{_computeWindIcon(_response)}}"></i>
+				</div>
+				<div class="centered-text smaller-text">
+					{{_computeWindDirection(_response)}} {{_response.wind.speed}} {{_computeWindUnit(units)}}
+				</div>
+			</div>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: "weather-component",
+			properties: {
+				lat: {
+					type: String,
+					value: ""
+				},
+				lon: {
+					type: String,
+					value: ""
+				},
+				appId: {
+					type: String,
+					value: ""
+				},
+				units: {
+					type: String,
+					value: 'metric'
+				},
+				showName: {
+					type: Boolean,
+					value: false
+				},
+				_params: {
+					type: Object,
+					computed: '_computeParams(lat, lon, appId, units)'
+				},
+				_response: {
+					type: Object
+				},
+				_windDirections: {
+					type: Array,
+					value: ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"]
+				}
+			},
+			_computeParams: function(lat, lon, appId, units) {
+				if(appId === "" || lat === "" || lon === ""){
+					return {};
+				}
+				return {lat: lat, lon: lon, appId: appId, units: units};
+			},
+			_handleResponse: function(e) {
+				console.log(e);
+				console.log(this._response);
+				//this._updateData();
+			},
+			_updateData: function() {
+				this.async(function() {
+					this.$.ajax.generateRequest();
+			    }, 15000);
+			},
+			_computeIcon: function(_response) {
+				if(_response == undefined)
+				{
+					return;
+				}
+				return "wi wi-owm-" + this._computeDayNight(_response) + "-" + _response.weather[0].id;
+			},
+			_computeWindIcon: function(_response) {
+				if(_response == undefined)
+				{
+					return;
+				}
+				return "wi wi-wind from-" + _response.wind.deg + "-deg";
+			},
+			_computeWindDirection: function(_response) {
+				if(_response == undefined)
+				{
+					return;
+				}
+				var index = Math.round((_response.wind.deg - 11.25) / 22.5);
+				return this._windDirections[index];
+			},
+			_computeWindUnit: function(units) {
+				if(units === 'imperial')
+				{
+					return "mi/h";
+				}
+				else {
+					return "m/s";
+				}
+			},
+			_computeDayNight: function(_response) {
+				if(_response == undefined)
+				{
+					return;
+				}
+				var sunrise = new Date(_response.sys.sunrise*1000);
+				var sunset = new Date(_response.sys.sunset*1000);
+				var now = new Date();
+				return sunrise < now && now < sunset ? "day" : "night";
+			}
+		});
+	</script>
+</dom-module>
